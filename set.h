@@ -7,9 +7,10 @@ class Set
 {
 
 public:
-    Set(const Set &obj)
+    Set(Set &obj)
     {
         SizePlural=obj.getSizePlural();
+        if(this->getSizePlural())
         free(this->Plural);
         this->Plural=new int [obj.getSizePlural()];
         for(int i = 0 ;i<obj.getSizePlural();i++)
@@ -20,8 +21,8 @@ public:
     }
     Set()
     {
+     SizePlural=0;
 
-        Plural=nullptr;
     }
     Set(size_t Size)
     {
@@ -30,6 +31,7 @@ public:
     }
     ~Set()
     {
+        if(this->getSizePlural())
         free (Plural);
     }
 
@@ -38,21 +40,21 @@ public:
     void Delete(int Element);
     int Max();
     int Min();
-    int At(int position);
+    int At(int position) const;
 
-    Set& operator = (const Set &obj);
-    Set operator +(const Set &obj)const;
-    Set operator -(const Set &obj)const;
-    Set operator / (const Set &obj)const;
+Set &operator =(Set const &obj);
+const Set operator +(const Set &obj);
+const Set operator -(const Set &obj);
+const Set operator / (const Set &obj);
 
 
 
-    int getSizePlural() const;
+    int getSizePlural() const ;
 
     void setSizePlural(int value);
-
-private:
     int *Plural;
+private:
+
     int SizePlural;
 };
 

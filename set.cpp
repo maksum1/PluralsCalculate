@@ -17,7 +17,7 @@ void Set::Add( int Element)
 {
     if(!this->inlude(Element))
     {
-        int NewSize=this->getSizePlural()+1;
+        int NewSize = this->getSizePlural() + 1;
         int *Temp=new int[NewSize];//Тимчасовий масив (більший на 1)
 
         for(int i =0;i<this->getSizePlural();i++)
@@ -27,13 +27,12 @@ void Set::Add( int Element)
 
         Temp[this->getSizePlural()]=Element;//Присвоюєм передани елемент в кінецьь масиву
 
-
+        if(this->getSizePlural())
         free(this->Plural);//звільняєм память
 
 
         this->setSizePlural(NewSize);//збільшуєм розмір множини на 1
 
-        this->Plural=new int[NewSize]; // виділяєм нову память
 
         this->Plural=Temp;
         for (int i = 0 ; i< this->getSizePlural();i++)
@@ -61,21 +60,17 @@ void Set::Delete(int Element)
             Temp[i]=this->Plural[i];//присвоюєм усі крім нього
         }
 
-        for(int i = Position+1;i < SizePlural;i++)
+        for(int i = Position;i < SizePlural - 1;i++)
         {
-            Temp[i]=this->Plural[i];//присвоюєм усі крім нього/
+            Temp[i]=this->Plural[i+1];//присвоюєм усі крім нього/
         }
 
+        if(this->getSizePlural())
         free(this->Plural);//видаляєм старий
 
         SizePlural--;//Розмір на 1 менше
 
-        this->Plural = new int[SizePlural];//нову память на 1 менше
-
-        for(int i =0 ; i<SizePlural;i++)
-        {
-            this->Plural[i]=Temp[i];//переприсвоюєм
-        }
+        this->Plural = Temp;
     }
 
 
@@ -92,16 +87,18 @@ int Set::Min()
     return *std::min_element( this->Plural , this->Plural+this->SizePlural);
 }
 
-int Set::At(int position)
+int Set::At(int position) const
 {
     return this->Plural[position];
 }
 
-Set &Set::operator =(const Set &obj)
+Set& Set::operator =(const Set &obj)
 {
-    this->setSizePlural(obj.getSizePlural());
 
+    if(this->getSizePlural())
     free(this->Plural);
+
+    this->setSizePlural(obj.getSizePlural());
 
     this->Plural=new int[this->getSizePlural()];
 
@@ -116,20 +113,19 @@ Set &Set::operator =(const Set &obj)
 
 }
 
-Set Set::operator +(const Set &obj) const
+const Set Set::operator +(const Set &obj)
 {
-    Set Adding(this->getSizePlural());
-
-    for(int i = 0 ; i<Adding.getSizePlural();i++)
+    Set Adding;
+    for(int i = 0 ; i<this->getSizePlural();i++)
     {
-        Adding.Plural[i]=this->Plural[i];    //переприсвоюєм 1 множину
+        Adding.Add(Plural[i]);    //переприсвоюєм 1 множину
     }
 
-    for(int i = this->SizePlural; i < obj.getSizePlural();i++ )
+    for(int i = 0; i < obj.getSizePlural();i++ )
     {
-        if(!Adding.inlude(obj.Plural[i]))//якщо обєкта немає
+        if(!Adding.inlude(obj.At(i)))//якщо обєкта немає
         {
-            Adding.Add(obj.Plural[i]);
+            Adding.Add(obj.At(i));
         }
     }
 
@@ -137,37 +133,31 @@ Set Set::operator +(const Set &obj) const
     return Adding;
 }
 
-Set Set::operator -(const Set &obj) const
+const Set Set::operator -(const Set &obj)
 {
-    Set Minus(*this);
+    Set Minus;
 
-    int index;
 
     for(int i = 0 ; i<obj.getSizePlural();i++)
     {
-        if(Minus.inlude(obj.Plural[i]))
+        if(this->inlude(obj.At(i)))
         {
-            Minus.Plural[index]=obj.Plural[i];
-            index++;
+            Minus.Add(Plural[i]);
         }
     }
 
-    Set Result (index);
-    for(int i = 0 ; i<index;i++)
-    {
-        Result.Plural[i]=Minus.Plural[i];
-    }
-    return Result;
+
+    return Minus;
 
 }
 
-Set Set::operator /(const Set &obj) const
+const Set  Set::operator /(const Set &obj)
 {
-    Set Without(obj);
+    Set Without;
 
-    for(int i = 0 ; i<Without.getSizePlural();i++)
+    for(int i = 0 ; i < this->getSizePlural(); i++)
     {
-        Without.Plural[i]=this->Plural[i];
+        Without.Add( this->Plural[i] );
     }
 
     for(int i = 0 ;i<obj.getSizePlural();i++)
