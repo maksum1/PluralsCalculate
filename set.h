@@ -1,14 +1,27 @@
 #ifndef SET_H
 #define SET_H
-#include"mainwindow.h"
 #include<qdebug.h>
+#include<QVector>
+
 class Set
 {
 
 public:
+    Set(const Set &obj)
+    {
+        SizePlural=obj.getSizePlural();
+        free(this->Plural);
+        this->Plural=new int [obj.getSizePlural()];
+        for(int i = 0 ;i<obj.getSizePlural();i++)
+        {
+            this->Plural[i]=obj.Plural[i];
+        }
+
+    }
     Set()
     {
-        qDebug()<<"sadasd";
+
+        Plural=nullptr;
     }
     Set(size_t Size)
     {
@@ -17,31 +30,30 @@ public:
     }
     ~Set()
     {
-        delete[] Plural;
+        free (Plural);
     }
 
-     Set& operator = (const Set &obj);
-     Set operator +(const Set &obj)const;
-     Set operator -(const Set &obj)const;
-     Set operator / (const Set &obj)const;
+    bool inlude(int Element);
+    void Add(int Element);
+    void Delete(int Element);
+    int Max();
+    int Min();
+    int At(int position);
+
+    Set& operator = (const Set &obj);
+    Set operator +(const Set &obj)const;
+    Set operator -(const Set &obj)const;
+    Set operator / (const Set &obj)const;
 
 
 
-    void Read(int index, int number);
-    bool InludeElement(int element);
-
-    int Power();
-    bool HaveElement;
-    int MaxElement();
-    int MinElement();
-    Set DeleteElement(int position);
     int getSizePlural() const;
-    int OutPut(int index);
-    bool Find(const Set &Arr, int Element );
+
+    void setSizePlural(int value);
+
 private:
     int *Plural;
     int SizePlural;
-
 };
 
 #endif // SET_H
